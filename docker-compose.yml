@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  ultra-robot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ultra-robot-market-maker
+    restart: unless-stopped
+    volumes:
+      - ./src/config:/app/src/config
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./models:/app/models
+    ports:
+      - "8050:8050"  # Port pour le tableau de bord
+    environment:
+      - TZ=UTC
+    env_file:
+      - ./src/config/.env
+    command: python run_bot.py --config src/config/default.yaml --mode simulation --log-level INFO --log-file logs/ultra_robot.log --dashboard
+    networks:
+      - ultra-robot-network
+
+  # Service Redis pour le cache haute vitesse (optionnel)
+  redis:
+    image: redis:alpine
+    container_name: ultra-robot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ultra-robot-network
+
+  # Service ClickHouse pour les données de séries temporelles (optionnel)
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: ultra-robot-clickhouse
+    restart: unless-stopped
+    ports:
+      - "8123:8123"  # HTTP interface
+      - "9000:9000"  # Native interface
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    networks:
+      - ultra-robot-network
+
+networks:
+  ultra-robot-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  clickhouse-data:

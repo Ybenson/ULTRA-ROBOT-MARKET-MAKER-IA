@@ -1,0 +1,55 @@
+# Dépendances principales
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Connexions API
+ccxt>=3.0.0  # Pour les exchanges de cryptomonnaies
+alpaca-trade-api>=3.0.0  # Pour les actions
+oandapyV20>=0.7.0  # Pour le forex
+websocket-client>=1.5.0
+aiohttp>=3.8.0
+requests>=2.28.0
+
+# IA/ML
+tensorflow>=2.12.0
+torch>=2.0.0
+scikit-learn>=1.2.0
+statsmodels>=0.14.0
+gym>=0.26.0  # Pour les environnements d'apprentissage par renforcement
+stable-baselines3>=2.0.0  # Algorithmes RL
+
+# Stockage et traitement des données
+redis>=4.5.0
+clickhouse-driver>=0.2.0
+influxdb>=5.3.0  # Base de données de séries temporelles
+pymongo>=4.3.0
+
+# Optimisation des performances
+numba>=0.56.0  # Compilation JIT pour Python
+cython>=0.29.0
+pyarrow>=11.0.0  # Sérialisation rapide des données
+
+# Tests et qualité du code
+pytest>=7.3.0
+pytest-cov>=4.1.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+
+# Surveillance et visualisation
+dash>=2.9.0
+plotly>=5.13.0
+streamlit>=1.20.0
+
+# Déploiement
+docker>=6.0.0
+kubernetes>=26.1.0
+
+# Utilitaires
+python-dotenv>=1.0.0
+pyyaml>=6.0.0
+loguru>=0.6.0
+tqdm>=4.65.0

@@ -1,0 +1,149 @@
+# Configuration par défaut pour ULTRA-ROBOT MARKET MAKER IA
+
+general:
+  bot_name: "ULTRA-ROBOT-MARKET-MAKER"
+  mode: "simulation"  # Options: live, backtest, paper, simulation
+  log_level: "INFO"
+  timezone: "UTC"
+  data_directory: "data"
+
+markets:
+  enabled_markets:
+    - id: "binance"
+      type: "crypto"
+      api_key_env: "BINANCE_API_KEY"
+      api_secret_env: "BINANCE_API_SECRET"
+      testnet: true
+    - id: "alpaca"
+      type: "stock"
+      api_key_env: "ALPACA_API_KEY"
+      api_secret_env: "ALPACA_API_SECRET"
+      paper: true
+    - id: "oanda"
+      type: "forex"
+      api_key_env: "OANDA_API_KEY"
+      account_id_env: "OANDA_ACCOUNT_ID"
+      practice: true
+  
+  default_market: "binance"
+  
+  symbols:
+    - "BTC/USDT"
+    - "ETH/USDT"
+    - "SOL/USDT"
+    - "AAPL"
+    - "MSFT"
+    - "EUR/USD"
+    - "GBP/USD"
+
+strategies:
+  enabled_strategies:
+    - id: "mm_basic"
+      type: "market_making"
+      symbols: ["BTC/USDT", "ETH/USDT"]
+      parameters:
+        spread_bid: 0.1  # 0.1%
+        spread_ask: 0.1  # 0.1%
+        order_size: 0.01
+        order_count: 3
+        refresh_rate: 10  # secondes
+        min_profit: 0.05  # 0.05%
+        max_position: 1.0
+    
+    - id: "mm_adaptive"
+      type: "adaptive_market_making"
+      symbols: ["SOL/USDT", "AAPL", "EUR/USD"]
+      parameters:
+        spread_bid: 0.1  # 0.1%
+        spread_ask: 0.1  # 0.1%
+        order_size: 0.01
+        order_count: 3
+        refresh_rate: 10  # secondes
+        min_profit: 0.05  # 0.05%
+        max_position: 1.0
+        volatility_factor: 1.0
+        volume_factor: 0.8
+        trend_factor: 0.5
+        liquidity_factor: 1.0
+        mean_reversion_factor: 0.5
+    
+    - id: "stat_arb"
+      type: "statistical_arbitrage"
+      symbol_pairs:
+        - ["BTC/USDT", "ETH/USDT"]
+        - ["AAPL", "MSFT"]
+      parameters:
+        z_score_threshold: 2.0
+        half_life: 24  # heures
+        position_size: 0.01
+        max_position: 1.0
+
+risk_management:
+  max_position_size: 1000  # en unités de base
+  max_drawdown_percent: 5.0
+  stop_loss_percent: 2.0
+  take_profit_percent: 5.0
+  max_open_orders: 10
+  manipulation_detection_enabled: true
+  volatility_threshold: 3.0
+  volume_spike_threshold: 5.0
+  spread_anomaly_threshold: 3.0
+  initial_capital: 10000
+
+execution:
+  order_type: "limit"
+  max_slippage_percent: 0.1
+  retry_attempts: 3
+  retry_delay_seconds: 1
+  use_iceberg_orders: false
+  max_order_age_seconds: 300
+
+data:
+  cache_enabled: true
+  cache_expiry_seconds: 60
+  historical_data_days: 30
+  use_websockets: true
+  order_book_depth: 10
+  tick_interval_seconds: 1
+  candle_intervals:
+    - "1m"
+    - "5m"
+    - "15m"
+    - "1h"
+    - "4h"
+    - "1d"
+
+ai:
+  enabled: true
+  model_type: "reinforcement_learning"  # Options: reinforcement_learning, adaptive_parameters
+  update_frequency_seconds: 300
+  learning_rate: 0.001
+  exploration_rate: 0.1
+  batch_size: 32
+  memory_size: 10000
+  save_models: true
+  models_directory: "models"
+
+monitoring:
+  dashboard_enabled: true
+  dashboard_port: 8050
+  metrics_interval_seconds: 60
+  alert_enabled: true
+  alert_channels:
+    - type: "email"
+      recipients: ["admin@example.com"]
+    - type: "telegram"
+      chat_id_env: "TELEGRAM_CHAT_ID"
+  performance_metrics:
+    - "pnl"
+    - "sharpe_ratio"
+    - "drawdown"
+    - "win_rate"
+    - "volume"
+
+security:
+  api_keys_from_env: true
+  encrypt_stored_keys: true
+  ip_whitelist: ["127.0.0.1"]
+  max_failed_login_attempts: 5
+  session_timeout_minutes: 30
