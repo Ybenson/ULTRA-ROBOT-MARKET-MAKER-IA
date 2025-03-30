@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional, Tuple, Union
 from loguru import logger
 
-from src.data.market_data_manager import MarketDataManager
+from src.market_data.market_data_manager import MarketDataManager
 
 
 class BaseStrategy(ABC):
@@ -23,20 +23,26 @@ class BaseStrategy(ABC):
     et implémenter ses méthodes abstraites.
     """
     
-    def __init__(self, config: Dict[str, Any], market_data_manager: MarketDataManager):
+    def __init__(self, strategy_id: str, market_data_manager: MarketDataManager, order_executor=None, risk_manager=None, config: Dict[str, Any] = None):
         """
         Initialise la stratégie.
         
         Args:
-            config: Configuration de la stratégie.
+            strategy_id: Identifiant unique de la stratégie.
             market_data_manager: Gestionnaire de données de marché.
+            order_executor: Exécuteur d'ordres.
+            risk_manager: Gestionnaire de risques.
+            config: Configuration de la stratégie.
         """
-        self.config = config
+        self.strategy_id = strategy_id
         self.market_data_manager = market_data_manager
-        self.name = config.get("name", self.__class__.__name__)
-        self.enabled = config.get("enabled", True)
-        self.symbols = config.get("symbols", [])
-        self.exchanges = config.get("exchanges", [])
+        self.order_executor = order_executor
+        self.risk_manager = risk_manager
+        self.config = config or {}
+        self.name = self.config.get("name", self.__class__.__name__)
+        self.enabled = self.config.get("enabled", True)
+        self.symbols = self.config.get("symbols", [])
+        self.exchanges = self.config.get("exchanges", [])
         
         # Paramètres de performance
         self.performance = {
@@ -122,6 +128,15 @@ class BaseStrategy(ABC):
             Nom de la stratégie.
         """
         return self.name
+    
+    def get_id(self) -> str:
+        """
+        Retourne l'identifiant unique de la stratégie.
+        
+        Returns:
+            Identifiant de la stratégie.
+        """
+        return self.config.get("id", self.name)
     
     def get_performance(self) -> Dict[str, Any]:
         """

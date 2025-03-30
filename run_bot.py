@@ -24,7 +24,7 @@ from src.init import load_config, setup_logging, initialize_exchanges, initializ
 
 # Importer les composants du bot
 from src.core.engine import MarketMakingEngine
-from src.data.market_data_manager import MarketDataManager
+from src.market_data.market_data_manager import MarketDataManager
 from src.risk_management.risk_manager import RiskManager
 from src.execution.order_executor import OrderExecutor
 from src.monitoring.monitor import Monitor

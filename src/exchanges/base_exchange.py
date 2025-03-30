@@ -219,6 +219,36 @@ class BaseExchange(ABC):
         """
         pass
     
+    @abstractmethod
+    def start_market_data_stream(self) -> bool:
+        """
+        Démarre le flux de données de marché.
+        
+        Returns:
+            True si le flux est démarré avec succès, False sinon.
+        """
+        pass
+    
+    @abstractmethod
+    def stop_market_data_stream(self) -> bool:
+        """
+        Arrête le flux de données de marché.
+        
+        Returns:
+            True si le flux est arrêté avec succès, False sinon.
+        """
+        pass
+    
+    @abstractmethod
+    def is_connected(self) -> bool:
+        """
+        Vérifie si l'exchange est connecté.
+        
+        Returns:
+            True si l'exchange est connecté, False sinon.
+        """
+        pass
+    
     def has_symbol(self, symbol: str) -> bool:
         """
         Vérifie si un symbole est supporté par l'exchange.

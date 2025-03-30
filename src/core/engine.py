@@ -15,11 +15,11 @@ import asyncio
 from typing import Dict, Any, List, Optional
 from loguru import logger
 
-from src.api.exchange_factory import ExchangeFactory
+from src.exchanges.exchange_factory import ExchangeFactory
 from src.strategies.strategy_factory import StrategyFactory
 from src.risk_management.risk_manager import RiskManager
 from src.execution.order_executor import OrderExecutor
-from src.data.market_data_manager import MarketDataManager
+from src.market_data.market_data_manager import MarketDataManager
 from src.ai.optimizer import AIOptimizer
 
 
@@ -71,12 +71,12 @@ class MarketMakingEngine:
         logger.info("Initialisation des composants du bot...")
         
         # Initialiser la factory d'exchanges
-        self.exchange_factory = ExchangeFactory(self.config)
+        self.exchange_factory = ExchangeFactory
         
         # Créer les connexions aux exchanges
         for market_config in self.config["markets"]["enabled_markets"]:
             exchange_id = market_config if isinstance(market_config, str) else market_config["id"]
-            exchange = self.exchange_factory.create_exchange(exchange_id, self.mode)
+            exchange = self.exchange_factory.create_exchange(exchange_id, self.config)
             self.exchanges[exchange_id] = exchange
             logger.info(f"Exchange initialisé: {exchange_id}")
         

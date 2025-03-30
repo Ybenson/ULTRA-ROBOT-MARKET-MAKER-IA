@@ -19,7 +19,7 @@ from loguru import logger
 
 # Importer les composants du bot
 from src.core.engine import MarketMakingEngine
-from src.data.market_data_manager import MarketDataManager
+from src.market_data.market_data_manager import MarketDataManager
 from src.exchanges.binance_exchange import BinanceExchange
 from src.strategies.market_making_strategy import MarketMakingStrategy
 from src.strategies.adaptive_market_making_strategy import AdaptiveMarketMakingStrategy
@@ -110,11 +110,13 @@ def initialize_exchanges(config):
                     
                     # Initialiser le connecteur Binance
                     testnet = market.get("testnet", True)
-                    exchange = BinanceExchange(
-                        api_key=api_key,
-                        api_secret=api_secret,
-                        testnet=testnet
-                    )
+                    exchange_config = {
+                        "name": market_id,
+                        "api_key": api_key,
+                        "api_secret": api_secret,
+                        "testnet": testnet
+                    }
+                    exchange = BinanceExchange(config=exchange_config)
                     
                     exchanges[market_id] = exchange
                     logger.info(f"Connecteur {market_id} initialisé")
@@ -177,8 +179,11 @@ def initialize_strategies(config, market_data_manager, order_executor, risk_mana
             
             elif strategy_type == "statistical_arbitrage":
                 strategy = StatisticalArbitrageStrategy(
-                    config=strategy_config,
-                    market_data_manager=market_data_manager
+                    strategy_id=strategy_id,
+                    market_data_manager=market_data_manager,
+                    order_executor=order_executor,
+                    risk_manager=risk_manager,
+                    config=strategy_config
                 )
                 
                 strategies.append(strategy)
@@ -187,8 +192,11 @@ def initialize_strategies(config, market_data_manager, order_executor, risk_mana
             elif strategy_type == "combined":
                 # Initialiser la stratégie combinée
                 combined_strategy = CombinedStrategy(
-                    config=strategy_config,
-                    market_data_manager=market_data_manager
+                    strategy_id=strategy_id,
+                    market_data_manager=market_data_manager,
+                    order_executor=order_executor,
+                    risk_manager=risk_manager,
+                    config=strategy_config
                 )
                 
                 # Ajouter les sous-stratégies

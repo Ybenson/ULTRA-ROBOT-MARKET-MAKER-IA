@@ -15,7 +15,7 @@ from loguru import logger
 from datetime import datetime, timedelta
 
 from src.strategies.base_strategy import BaseStrategy
-from src.data.market_data_manager import MarketDataManager
+from src.market_data.market_data_manager import MarketDataManager
 
 
 class StatisticalArbitrageStrategy(BaseStrategy):
@@ -26,26 +26,29 @@ class StatisticalArbitrageStrategy(BaseStrategy):
     temporaires de leur relation historique pour générer des profits.
     """
     
-    def __init__(self, config: Dict[str, Any], market_data_manager: MarketDataManager):
+    def __init__(self, strategy_id: str, market_data_manager: MarketDataManager, order_executor=None, risk_manager=None, config: Dict[str, Any] = None):
         """
         Initialise la stratégie d'arbitrage statistique.
         
         Args:
-            config: Configuration de la stratégie.
+            strategy_id: Identifiant unique de la stratégie.
             market_data_manager: Gestionnaire de données de marché.
+            order_executor: Exécuteur d'ordres.
+            risk_manager: Gestionnaire de risques.
+            config: Configuration de la stratégie.
         """
-        super().__init__(config, market_data_manager)
+        super().__init__(strategy_id, market_data_manager, order_executor, risk_manager, config or {})
         
         # Paramètres de configuration
-        self.pairs = config.get("pairs", [])  # Liste des paires à surveiller
-        self.lookback_period = config.get("lookback_period", 30)  # Période d'historique en jours
-        self.z_score_threshold = config.get("z_score_threshold", 2.0)  # Seuil de Z-score pour les signaux
-        self.position_size_pct = config.get("position_size_pct", 0.1)  # Taille de position en % du capital
-        self.max_positions = config.get("max_positions", 5)  # Nombre maximum de positions simultanées
-        self.profit_target_pct = config.get("profit_target_pct", 0.02)  # Objectif de profit en %
-        self.stop_loss_pct = config.get("stop_loss_pct", 0.05)  # Stop loss en %
-        self.timeframe = config.get("timeframe", "1h")  # Intervalle des données
-        self.rebalance_interval = config.get("rebalance_interval", 24)  # Intervalle de rééquilibrage en heures
+        self.pairs = self.config.get("pairs", [])  # Liste des paires à surveiller
+        self.lookback_period = self.config.get("lookback_period", 30)  # Période d'historique en jours
+        self.z_score_threshold = self.config.get("z_score_threshold", 2.0)  # Seuil de Z-score pour les signaux
+        self.position_size_pct = self.config.get("position_size_pct", 0.1)  # Taille de position en % du capital
+        self.max_positions = self.config.get("max_positions", 5)  # Nombre maximum de positions simultanées
+        self.profit_target_pct = self.config.get("profit_target_pct", 0.02)  # Objectif de profit en %
+        self.stop_loss_pct = self.config.get("stop_loss_pct", 0.05)  # Stop loss en %
+        self.timeframe = self.config.get("timeframe", "1h")  # Intervalle des données
+        self.rebalance_interval = self.config.get("rebalance_interval", 24)  # Intervalle de rééquilibrage en heures
         
         # État interne
         self.pair_models = {}  # Modèles pour chaque paire

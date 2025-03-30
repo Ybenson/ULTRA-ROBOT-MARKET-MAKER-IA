@@ -14,7 +14,7 @@ from typing import Dict, Any, List, Optional, Tuple
 from loguru import logger
 
 from src.strategies.base_strategy import BaseStrategy
-from src.data.market_data_manager import MarketDataManager
+from src.market_data.market_data_manager import MarketDataManager
 
 
 class CombinedStrategy(BaseStrategy):

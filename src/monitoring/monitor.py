@@ -314,6 +314,14 @@ class Monitor:
             
             logger.info("Alertes effacées")
     
+    def update_metrics(self):
+        """
+        Met à jour toutes les métriques en appelant les callbacks enregistrés.
+        """
+        with self.lock:
+            self._update_metrics()
+            self._check_alert_conditions()
+    
     def _update_loop(self):
         """
         Boucle de mise à jour des métriques.
@@ -496,7 +504,7 @@ class Monitor:
         
         # Démarrer le serveur Dash dans un thread séparé
         self.dashboard_thread = threading.Thread(
-            target=self.dashboard_app.run_server,
+            target=self.dashboard_app.run,
             kwargs={"debug": False, "port": self.dashboard_port}
         )
         self.dashboard_thread.daemon = True

@@ -14,16 +14,6 @@ markets:
       api_key_env: "BINANCE_API_KEY"
       api_secret_env: "BINANCE_API_SECRET"
       testnet: true
-    - id: "alpaca"
-      type: "stock"
-      api_key_env: "ALPACA_API_KEY"
-      api_secret_env: "ALPACA_API_SECRET"
-      paper: true
-    - id: "oanda"
-      type: "forex"
-      api_key_env: "OANDA_API_KEY"
-      account_id_env: "OANDA_ACCOUNT_ID"
-      practice: true
   
   default_market: "binance"
   
@@ -31,15 +21,12 @@ markets:
     - "BTC/USDT"
     - "ETH/USDT"
     - "SOL/USDT"
-    - "AAPL"
-    - "MSFT"
-    - "EUR/USD"
-    - "GBP/USD"
 
 strategies:
   enabled_strategies:
     - id: "mm_basic"
       type: "market_making"
+      strategy_id: "mm_basic"
       symbols: ["BTC/USDT", "ETH/USDT"]
       parameters:
         spread_bid: 0.1  # 0.1%
@@ -52,7 +39,8 @@ strategies:
     
     - id: "mm_adaptive"
       type: "adaptive_market_making"
-      symbols: ["SOL/USDT", "AAPL", "EUR/USD"]
+      strategy_id: "mm_adaptive"
+      symbols: ["SOL/USDT"]
       parameters:
         spread_bid: 0.1  # 0.1%
         spread_ask: 0.1  # 0.1%
@@ -69,9 +57,9 @@ strategies:
     
     - id: "stat_arb"
       type: "statistical_arbitrage"
+      strategy_id: "stat_arb"
       symbol_pairs:
         - ["BTC/USDT", "ETH/USDT"]
-        - ["AAPL", "MSFT"]
       parameters:
         z_score_threshold: 2.0
         half_life: 24  # heures

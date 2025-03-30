@@ -11,9 +11,10 @@ des ordres d'achat et de vente autour du prix du marché avec un spread défini.
 import time
 from typing import Dict, Any, List, Optional, Tuple
 from loguru import logger
+from src.strategies.base_strategy import BaseStrategy
 
 
-class MarketMakingStrategy:
+class MarketMakingStrategy(BaseStrategy):
     """
     Stratégie de Market Making de base.
     
@@ -33,14 +34,19 @@ class MarketMakingStrategy:
             risk_manager: Gestionnaire de risques.
             config: Configuration de la stratégie.
         """
-        self.strategy_id = strategy_id
-        self.market_data_manager = market_data_manager
+        config = config or {}
+        super().__init__(
+            strategy_id=strategy_id,
+            market_data_manager=market_data_manager,
+            order_executor=order_executor,
+            risk_manager=risk_manager,
+            config=config
+        )
+        
         self.order_executor = order_executor
         self.risk_manager = risk_manager
-        self.config = config or {}
         
         # Extraire les paramètres de la configuration
-        self.symbols = self.config.get("symbols", ["BTC/USDT"])
         parameters = self.config.get("parameters", {})
         
         # Paramètres de la stratégie
@@ -116,6 +122,20 @@ class MarketMakingStrategy:
                 
             except Exception as e:
                 logger.error(f"Erreur lors de l'exécution de la stratégie pour {symbol}: {str(e)}")
+    
+    def update(self):
+        """
+        Met à jour la stratégie.
+        
+        Cette méthode est appelée périodiquement pour mettre à jour
+        l'état de la stratégie et générer des signaux.
+        """
+        if not self.is_running or not self.enabled:
+            return
+            
+        # Exécuter la stratégie pour chaque symbole
+        for symbol in self.symbols:
+            self.execute()
     
     def _get_market_data(self, symbol: str) -> Optional[Dict[str, Any]]:
         """

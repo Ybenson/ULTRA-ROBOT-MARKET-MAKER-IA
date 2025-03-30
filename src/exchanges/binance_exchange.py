@@ -750,3 +750,51 @@ class BinanceExchange(BaseExchange):
             return filters["stepSize"]
         
         return super().get_min_amount_increment(symbol)
+    
+    def start_market_data_stream(self) -> bool:
+        """
+        Démarre le flux de données de marché via WebSocket.
+        
+        Returns:
+            True si le flux est démarré avec succès, False sinon.
+        """
+        try:
+            # Vérifier si nous avons des symboles à suivre
+            if not self.symbols:
+                logger.warning("Aucun symbole configuré pour le flux de données")
+                return False
+            
+            # TODO: Implémenter la connexion WebSocket
+            # Pour l'instant, nous utilisons le polling REST API
+            logger.info("Flux de données de marché démarré (mode polling)")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Erreur lors du démarrage du flux de données: {str(e)}")
+            return False
+    
+    def stop_market_data_stream(self) -> bool:
+        """
+        Arrête le flux de données de marché.
+        
+        Returns:
+            True si le flux est arrêté avec succès, False sinon.
+        """
+        try:
+            # TODO: Implémenter la déconnexion WebSocket
+            # Pour l'instant, nous utilisons le polling REST API
+            logger.info("Flux de données de marché arrêté")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Erreur lors de l'arrêt du flux de données: {str(e)}")
+            return False
+    
+    def is_connected(self) -> bool:
+        """
+        Vérifie si l'exchange est connecté.
+        
+        Returns:
+            True si l'exchange est connecté, False sinon.
+        """
+        return self.connected
