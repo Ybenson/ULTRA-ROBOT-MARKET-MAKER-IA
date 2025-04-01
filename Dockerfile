@@ -4,6 +4,8 @@ FROM python:3.10-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV TZ=UTC
+ENV BINANCE_API_KEY=""
+ENV BINANCE_API_SECRET=""
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -29,7 +31,6 @@ COPY . .
 # Installer le package en mode développement
 RUN pip install -e .
 
-# Ajouter le répertoire parent au PYTHONPATH
 ENV PYTHONPATH=/app/src
 
 # Créer un utilisateur non-root

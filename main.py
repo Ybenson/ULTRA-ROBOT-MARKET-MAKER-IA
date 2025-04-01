@@ -104,6 +104,8 @@ def initialize_exchanges(config: Dict[str, Any]) -> Dict[str, Any]:
     for market in enabled_markets:
         market_id = market.get("id")
         if market_id == "binance":
+            # Ajouter les symboles à la configuration du marché
+            market["symbols"] = config.get("markets", {}).get("symbols", [])
             exchange = BinanceExchange(config=market)
             exchanges[market_id] = exchange
             logger.info(f"Connexion à {market_id} initialisée")
@@ -225,15 +227,62 @@ def main():
         # Créer et démarrer le moteur
         engine_config = {
             "mode": config.get("general", {}).get("mode", "simulation"),
-            "exchanges": exchanges,
-            "strategies": strategies,
-            "market_data_manager": market_data_manager,
-            "monitor": monitor,
-            "risk_config": config.get("risk_management", {}),
-            "execution_config": config.get("execution", {})
+            "markets": {
+                "enabled_markets": [{
+                    "id": "binance",
+                    "name": "Binance",
+                    "api_key": os.getenv("BINANCE_API_KEY", ""),
+                    "api_secret": os.getenv("BINANCE_API_SECRET", ""),
+                    "additional_params": {
+                        "testnet": True
+                    }
+                }]
+            },
+            "data": config.get("data", {}),
+            "strategies": {
+                "enabled_strategies": [{
+                    "id": "mm_basic",
+                    "type": "market_making",
+                    "name": "Basic Market Making",
+                    "symbols": ["BTC/USDT", "ETH/USDT"],
+                    "exchanges": ["binance"],
+                    "params": {
+                        "spread": 0.002,
+                        "order_size": 0.001,
+                        "max_open_orders": 4
+                    }
+                }, {
+                    "id": "mm_adaptive",
+                    "type": "adaptive_market_making",
+                    "name": "Adaptive Market Making",
+                    "symbols": ["SOL/USDT"],
+                    "exchanges": ["binance"],
+                    "params": {
+                        "min_spread": 0.001,
+                        "max_spread": 0.005,
+                        "volatility_window": 60,
+                        "order_size_range": [0.001, 0.01]
+                    }
+                }, {
+                    "id": "stat_arb",
+                    "type": "statistical_arbitrage",
+                    "name": "Statistical Arbitrage",
+                    "symbols": ["BTC/USDT", "ETH/USDT"],
+                    "exchanges": ["binance"],
+                    "params": {
+                        "window_size": 100,
+                        "z_score_threshold": 2.0,
+                        "position_size": 0.001
+                    }
+                }]
+            },
+            "risk_management": config.get("risk_management", {}),
+            "execution": config.get("execution", {}),
+            "ai": config.get("ai", {"enabled": False})
         }
         
         engine = MarketMakingEngine(config=engine_config)
+        engine.initialize()
         engine.start()
         
     except Exception as e:
