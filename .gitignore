@@ -35,9 +35,7 @@ ENV/
 logs/
 *.log
 
-# Data and models
-data/
-models/
+# Models and cached data
 *.pkl
 *.h5
 *.pt

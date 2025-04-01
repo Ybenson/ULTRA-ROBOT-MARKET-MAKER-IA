@@ -26,6 +26,12 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copier le code source
 COPY . .
 
+# Installer le package en mode développement
+RUN pip install -e .
+
+# Ajouter le répertoire parent au PYTHONPATH
+ENV PYTHONPATH=/app/src
+
 # Créer un utilisateur non-root
 RUN useradd -m appuser
 RUN chown -R appuser:appuser /app
@@ -38,4 +44,4 @@ RUN mkdir -p logs data
 EXPOSE 8050
 
 # Commande par défaut
-CMD ["python", "-m", "src.main", "--config", "config/default.yaml"]
+CMD ["python", "/app/src/main.py", "--config", "/app/src/config/default.yaml"]
